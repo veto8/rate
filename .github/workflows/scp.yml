@@ -1,0 +1,36 @@
+name: SCP Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'myridiax'
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: SCP files to server
+        run: |
+
+          wget https://github.com/myridia/mtranslate/releases/download/main/mtranslate_linux -O mtranslate
+          chmod 777 mtranslate 
+          echo "list root folder" 
+          ls -all
+          
+          echo "upload..."
+          scp mtranslate ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ secrets.SERVER_PATH }}
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "systemctl restart mtranslate"
+
+
+
