@@ -5,6 +5,7 @@ use axum::{
 };
 
 use libs::help::help;
+use libs::rate::daily;
 use libs::test::test;
 use std::net::SocketAddr;
 use tower_http::cors::CorsLayer;
@@ -18,7 +19,7 @@ async fn main() {
     let x: u8 = 3;
 
     let app = Router::new()
-        .route("/", get(help))
+        .route("/", get(daily))
         .route("/help", get(help))
         .route("/test", get(move || test(x)))
         .layer(cors)
@@ -27,7 +28,7 @@ async fn main() {
     println!("Server started successfully");
     let host = "0.0.0.0:8088";
     println!("http://{}/test", host);
-    println!("http://{}?s=en&t=th&v=hello", host);
+    println!("http://{}?s=eur&t=thb&v=1", host);
 
     let listener = tokio::net::TcpListener::bind(host).await.unwrap();
     axum::serve(

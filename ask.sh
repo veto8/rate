@@ -10,9 +10,8 @@ echo -e "2\t Run - Docker Page "
 echo -e "3\t Clean Docker - Clean the docker containers and volumes "
 echo -e "4\t Clean All - Clean the docker containers and volumes and images "
 echo -e "5\t Export Db - Export the database on the docker/test server"
-echo -e "6\t Test html text via curl LOCAL"
-echo -e "7\t Test html text via curl ONLINE "
-echo -e "8\t Test plain text via curl "
+echo -e "6\t Test via curl LOCAL"
+
 
 
 
@@ -60,17 +59,7 @@ elif [ "$task" = "5" ]; then
 
 elif [ "$task" = "6" ]; then
     echo "...${task}"
-    curl -X POST  http://0.0.0.0:8089/translate_html -H 'Content-Type:application/json'  -d '{"html":"<div class=\"hello\">Hello world</div>","t":"ru","s":"en"}' 
-
-
-elif [ "$task" = "7" ]; then
-    echo "...${task}"
-    curl -X POST  https://mtranslate.myridia.com/translate_html -H 'Content-Type:application/json'  -d '{"html":"<div class=\"hello\">Hello world</div>","t":"ru","s":"en"}' 
-    
-
-elif [ "$task" = "8" ]; then
-    echo "...${task}"
-    curl -X GET 'http://0.0.0.0:8089?s=en&t=th&v=hello'
+    curl -X GET 'http://0.0.0.0:8088?s=eur&t=thb&v=2'
 
     
 else
