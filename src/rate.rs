@@ -1,9 +1,10 @@
 use axum::{Json, extract, extract::Query, response::IntoResponse};
+use chrono::Utc;
+//use reqwest::Error;
 use rusqlite::{Connection, Result};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-
-use chrono::Utc;
+use std::error::Error;
 
 #[derive(Debug, Serialize)]
 struct Rated {
@@ -54,6 +55,8 @@ struct Ratex {
     target_value: f64,
 }
 pub async fn daily(Query(params): Query<HashMap<String, String>>) -> impl IntoResponse {
+    let y = abc().await;
+
     let mut r = Rated {
         target_code: "".to_string(),
         source_code: "".to_string(),
@@ -167,9 +170,39 @@ RUB REAL NOT NULL DEFAULT 0.0
         let rx = rate.unwrap();
         r.target_value = rx.target_value * r.source_value;
         if today < rx.date {
-            println!("date: {0} | rate: {1}", rx.date, rx.target_value);
+
+            //let rate = ecb().await;
+            //println!("date: {0} | rate: {1}", rx.date, rx.target_value);
+
+            //let url = format!("http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml");
+            //let response = reqwest::get(url).await;
+            //let client = reqwest::Client::new();
+
+            //println!("...get request to qb {url}");
+            //let res = client.get(url).header("User-Agent", "Sapir").send().await;
+            //let r = res.unwrap().text().await.unwrap().to_string();
+            //let inv: Invoice = serde_json::from_str(&r).unwrap();
+            ////println!("{:?}", inv);
+
+            //for i in inv.InvoiceQueryRs.InvoiceRet.iter() {
+            //    let mut row: Row<String> = Default::default();
+            //    row.number = i.RefNumber.parse().unwrap();
+            //}
         }
     }
 
+    // let x = process_request().await;
+    //println!("{:?}", x.await);
+
     Json(r)
+}
+
+pub async fn abc() -> String {
+    "hello".to_string()
+}
+
+pub async fn ecb() -> Result<String, Box<dyn Error>> {
+    //  let url = format!("http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml");
+    //    let response = reqwest::get(url).await;
+    Ok("".to_string())
 }

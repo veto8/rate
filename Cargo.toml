@@ -28,6 +28,7 @@ kuchiki = {version ="*"}
 clap = {version='*', features = ["cargo","derive"]}
 #sqlite = {version ="*"}
 rusqlite = { version = "*", features = ["bundled"] }
+reqwest = { version = "*", features = ["json","blocking"] }
 
 [lib]
 name = "libs"
