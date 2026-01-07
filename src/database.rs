@@ -1,12 +1,12 @@
-use axum::{Json, extract, extract::Query, response::IntoResponse};
-use chrono::Utc;
-use reqwest::*;
-use serde::{Deserialize, Serialize};
-use serde_xml_rs::from_str;
-use std::collections::HashMap;
+//use axum::{Json, extract, extract::Query, response::IntoResponse};
+//use chrono::Utc;
+//use reqwest::*;
+//use serde::{Deserialize, Serialize};
+//use serde_xml_rs::from_str;
+//use std::collections::HashMap;
 
 use rusqlite::{Connection, Result};
-use std::error::Error;
+//use std::error::Error;
 
 #[derive(Debug)]
 struct Ratex {
@@ -14,40 +14,39 @@ struct Ratex {
     target_value: f64,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 struct Rate {
     date: i32,
-    JPY: f64,
-    CZK: f64,
-    DKK: f64,
-    GBP: f64,
-    HUF: f64,
-    PLN: f64,
-    RON: f64,
-    SEK: f64,
-    CHF: f64,
-    ISK: f64,
-    NOK: f64,
-    TRY: f64,
-    AUD: f64,
-    BRL: f64,
-    CAD: f64,
-    CNY: f64,
-    HKD: f64,
-    IDR: f64,
-    ILS: f64,
-    INR: f64,
-    KRW: f64,
-    MXN: f64,
-    MYR: f64,
-    NZD: f64,
-    PHP: f64,
-    SGD: f64,
-    THB: f64,
-    ZAR: f64,
+    jpy: f64,
+    czk: f64,
+    dkk: f64,
+    gbp: f64,
+    huf: f64,
+    pln: f64,
+    ron: f64,
+    sek: f64,
+    chf: f64,
+    isk: f64,
+    nok: f64,
+    aud: f64,
+    brl: f64,
+    cad: f64,
+    cny: f64,
+    hkd: f64,
+    idr: f64,
+    ils: f64,
+    inr: f64,
+    krw: f64,
+    mxn: f64,
+    myr: f64,
+    nzd: f64,
+    php: f64,
+    sgd: f64,
+    thb: f64,
+    zar: f64,
 }
 
-pub async fn last(target_code: &str) -> Result<(Vec<f64>)> {
+pub async fn last(target_code: &str) -> Result<Vec<f64>> {
     let mut v: Vec<f64> = vec![];
     let conn = Connection::open("rate.db").unwrap();
 
@@ -73,7 +72,30 @@ pub async fn last(target_code: &str) -> Result<(Vec<f64>)> {
         v.push(rx.target_value);
     }
 
-    Ok((v))
+    Ok(v)
+}
+
+pub async fn insert() -> Result<()> {
+    let mut rate = Rate::default();
+
+    /*
+    conn.execute(
+        "INSERT INTO rate (date, THB) VALUES (?1, ?2)",
+        (&d.date, &d.THB),
+    )
+    .unwrap();
+
+
+    let now = Utc::now();
+    let today: i32 = now.format("%Y%m%d00").to_string().parse().unwrap();
+
+    }
+
+    // let x = process_request().await;
+    //println!("{:?}", x.await);
+    */
+
+    Ok(())
 }
 
 pub async fn new() -> Result<()> {
@@ -81,40 +103,39 @@ pub async fn new() -> Result<()> {
     conn.execute(
         "CREATE TABLE rate (
 date INTEGER PRIMARY KEY,
-JPY REAL NOT NULL DEFAULT 0.0,
-CZK REAL NOT NULL DEFAULT 0.0,
-DKK REAL NOT NULL DEFAULT 0.0,
-GBP REAL NOT NULL DEFAULT 0.0,
-HUF REAL NOT NULL DEFAULT 0.0,
-PLN REAL NOT NULL DEFAULT 0.0,
-RON REAL NOT NULL DEFAULT 0.0,
-SEK REAL NOT NULL DEFAULT 0.0,
-CHF REAL NOT NULL DEFAULT 0.0,
-ISK REAL NOT NULL DEFAULT 0.0,
-NOK REAL NOT NULL DEFAULT 0.0,
-TRY REAL NOT NULL DEFAULT 0.0,
-AUD REAL NOT NULL DEFAULT 0.0,
-BRL REAL NOT NULL DEFAULT 0.0,
-CAD REAL NOT NULL DEFAULT 0.0,
-CNY REAL NOT NULL DEFAULT 0.0,
-HKD REAL NOT NULL DEFAULT 0.0,
-IDR REAL NOT NULL DEFAULT 0.0,
-ILS REAL NOT NULL DEFAULT 0.0,
-INR REAL NOT NULL DEFAULT 0.0,
-KRW REAL NOT NULL DEFAULT 0.0,
-MXN REAL NOT NULL DEFAULT 0.0,
-MYR REAL NOT NULL DEFAULT 0.0,
-NZD REAL NOT NULL DEFAULT 0.0,
-PHP REAL NOT NULL DEFAULT 0.0,
-SGD REAL NOT NULL DEFAULT 0.0,
-THB REAL NOT NULL DEFAULT 0.0,
-ZAR REAL NOT NULL DEFAULT 0.0,
-RUB REAL NOT NULL DEFAULT 0.0
+jpy real not null default 0.0,
+czk real not null default 0.0,
+dkk real not null default 0.0,
+gbp real not null default 0.0,
+huf real not null default 0.0,
+pln real not null default 0.0,
+ron real not null default 0.0,
+sek real not null default 0.0,
+chf real not null default 0.0,
+isk real not null default 0.0,
+nok real not null default 0.0,
+try real not null default 0.0,
+aud real not null default 0.0,
+brl real not null default 0.0,
+cad real not null default 0.0,
+cny real not null default 0.0,
+hkd real not null default 0.0,
+idr real not null default 0.0,
+ils real not null default 0.0,
+inr real not null default 0.0,
+krw real not null default 0.0,
+mxn real not null default 0.0,
+myr real not null default 0.0,
+nzd real not null default 0.0,
+php real not null default 0.0,
+sgd real not null default 0.0,
+thb real not null default 0.0,
+zar real not null default 0.0,
+rub real not null default 0.0
+
         )",
         (), // empty list of parameters.
     )?;
-
-    let r = true;
 
     Ok(())
 }

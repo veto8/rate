@@ -1,8 +1,8 @@
 use axum::{Json, response::IntoResponse};
-use rusqlite::{Connection, Result};
+//use rusqlite::{Connection, Result};
 
 pub async fn test(x: u8) -> impl IntoResponse {
-    let y = abc().await;
+    println!("{:?}", x);
     let r = serde_json::json!([
         {
             "test": "OK",

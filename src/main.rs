@@ -1,7 +1,7 @@
 use axum::{
     Router,
     http::{HeaderValue, Method},
-    routing::{get, post},
+    routing::get,
 };
 
 use libs::help::help;

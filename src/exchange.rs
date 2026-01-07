@@ -1,8 +1,8 @@
-use axum::{Json, extract, extract::Query, response::IntoResponse};
-use chrono::Utc;
-use reqwest::*;
-use rusqlite::{Connection, Result};
-use serde::{Deserialize, Serialize};
+//use axum::{Json, extract, extract::Query, response::IntoResponse};
+//use chrono::Utc;
+//use reqwest::*;
+//use rusqlite::{Connection, Result};
+use serde::Deserialize;
 use serde_xml_rs::from_str;
 use std::collections::HashMap;
 
@@ -47,11 +47,11 @@ pub async fn ecb() -> Result<HashMap<String, f64>, Box<dyn Error>> {
     let res = _res.unwrap().text().await.unwrap().to_string();
 
     let mut rates: HashMap<String, f64> = HashMap::new();
-    let mut date = "".to_string();
+
     match from_str::<Envelope>(&res) {
         Ok(envelope) => {
             for time_entry in envelope.cube_root.time_entries {
-                date = format!("{0}16", time_entry.time.to_string().replace("-", ""));
+                let date = format!("{0}16", time_entry.time.to_string().replace("-", ""));
                 rates.insert("date".to_string(), date.parse().unwrap());
                 for r in time_entry.rates {
                     rates.insert(r.currency, r.rate);
