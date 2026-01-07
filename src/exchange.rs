@@ -36,7 +36,8 @@ struct RateEntry {
     pub rate: f64,
 }
 
-pub async fn ecb() -> Result<HashMap<String, f64>, Box<dyn Error>> {
+pub async fn get_ecb_rates() -> Result<HashMap<String, f64>, Box<dyn Error>> {
+    print!("...get_ecb_rates fn");
     let url = format!("http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml");
     let client = reqwest::Client::new();
     let _res = client
@@ -54,12 +55,14 @@ pub async fn ecb() -> Result<HashMap<String, f64>, Box<dyn Error>> {
                 let date = format!("{0}16", time_entry.time.to_string().replace("-", ""));
                 rates.insert("date".to_string(), date.parse().unwrap());
                 for r in time_entry.rates {
-                    rates.insert(r.currency, r.rate);
+                    if r.currency.to_lowercase() != "try" {
+                        rates.insert(r.currency.to_lowercase(), r.rate);
+                    }
                 }
             }
         }
         Err(e) => println!("Error: {}", e),
     }
-    println!("{:?}", rates);
+    //    println!("{:?}", rates);
     Ok(rates)
 }
