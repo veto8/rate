@@ -25,9 +25,9 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v4
 
-      - name: check_xcode
+      - name: udpate_software
         run: |
-          xcode-select --install
+         softwareupdate --all --install --force
           
       - name: add_targets
         run: |
