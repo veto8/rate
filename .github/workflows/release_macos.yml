@@ -14,7 +14,7 @@ permissions:
   packages: none
 
 jobs:
-  build_macos_intel:
+  build_macos:
     if: github.repository_owner == 'myridia'
     runs-on: macos-15
     steps:
@@ -24,8 +24,12 @@ jobs:
    
       - name: checkout repo
         uses: actions/checkout@v4
- 
-      - name: list_targets
+
+      - name: check_xcode
+        run: |
+          xcode-select --install
+          
+      - name: add_targets
         run: |
           #rustup target list
           rustup target add x86_64-apple-darwin
@@ -36,6 +40,7 @@ jobs:
       - name: compile macos
         run: |
           cargo build --target x86_64-apple-darwin --release 
+          cargo clean 
           #cargo build  --release 
 
 
