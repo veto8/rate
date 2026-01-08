@@ -27,7 +27,7 @@ jobs:
  
       - name: list_targets
         run: |
-          rustup target list
+          #rustup target list
           rustup target add x86_64-apple-darwin
           echo "Installed Targets:"
           rustup target list --installed
