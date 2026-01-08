@@ -39,6 +39,9 @@ jobs:
           cargo clean 
           #cargo build  --release 
 
+      - name: rename macos binary
+        run: |
+          cp target/release/rate target/release/rate_macos
 
       - name: Upload Macos Binary to release
         uses: svenstaro/upload-release-action@v2
