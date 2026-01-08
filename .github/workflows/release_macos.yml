@@ -25,10 +25,6 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v4
 
-      - name: udpate_software
-        run: |
-         softwareupdate --all --install --force
-          
       - name: add_targets
         run: |
           #rustup target list
@@ -39,7 +35,7 @@ jobs:
     
       - name: compile macos
         run: |
-          cargo build --target x86_64-apple-darwin --release 
+          # cargo build --target x86_64-apple-darwin --release 
           cargo clean 
           #cargo build  --release 
 
