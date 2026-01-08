@@ -41,13 +41,14 @@ jobs:
 
       - name: rename macos binary
         run: |
-          cp target/release/rate target/release/rate_macos
+          ls target/release/
+          cp target/release/aarch64-apple-darwin/rate target/release/aarch64-apple-darwin/rate_macos
 
       - name: Upload Macos Binary to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: 'target/release/rate_macos'
+          file: 'target/release/aarch64-apple-darwin/rate_macos'
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true   
