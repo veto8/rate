@@ -33,10 +33,10 @@ jobs:
           rustup target list --installed
           
     
-      #- name: compile macos
-      #  run: |
-      #    # cargo build --target x86_64-apple-darwin --release 
-      #    cargo build  --release 
+      - name: compile macos
+        run: |
+          # cargo build --target x86_64-apple-darwin --release 
+          cargo build  --release 
 
 
           
