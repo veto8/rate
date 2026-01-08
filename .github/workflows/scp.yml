@@ -23,13 +23,13 @@ jobs:
       - name: SCP files to server
         run: |
 
-          wget https://github.com/myridia/mrate/releases/download/main/rate_linux -O mrate
+          wget https://github.com/myridia/rate/releases/download/main/rate_linux -O mrate
           chmod 777 mrate 
           echo "list root folder" 
           ls -all
           
-          #echo "upload..."
-          #scp mrate ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ secrets.SERVER_PATH }}
+          echo "upload..."
+          scp mrate ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ secrets.SERVER_PATH }}
           #ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "systemctl restart mrate"
 
 
