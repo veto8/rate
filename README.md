@@ -23,7 +23,7 @@ Restart=always
 RestartSec=1
 User=root
 AmbientCapabilities=CAP_SYS_RAWIO
-ExecStart=/usr/bin/env /var/customers/webs/mtranslate/mrate
+ExecStart=/usr/bin/env /var/customers/webs/mrate/mrate
 
 [Install]
 WantedBy=multi-user.target
