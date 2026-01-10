@@ -9,7 +9,7 @@ use serde::Serialize;
 use serde_json::Value;
 use std::collections::HashMap;
 //use std::error::Error;
-//use gethostname::gethostname;
+use gethostname::gethostname;
 #[derive(Debug, Serialize)]
 struct Rated {
     target_code: String,
@@ -68,7 +68,7 @@ impl Rate {
     }
 }
 
-pub async fn daily(Query(params): Query<HashMap<String, String>>) -> impl IntoResponse {
+pub async fn daily_rate(Query(params): Query<HashMap<String, String>>) -> impl IntoResponse {
     //let y = ecb().await;
 
     let mut r = Rated {
@@ -112,7 +112,9 @@ pub async fn daily(Query(params): Query<HashMap<String, String>>) -> impl IntoRe
         r.target_rate = last[1];
         r.target_value = r.target_rate * r.source_value;
     } else {
-        r.msg = format!("Missing Parameters example usage: http://0.0.0.0:8087?s=eur&t=thb&v=2'");
+        //let x = gethostname().into_string();
+        //println!("{:?}", x);
+        r.msg = format!("Missing Parameters!  example usage: http://0.0.0.0:8087?s=eur&t=thb&v=2'");
     }
     Json(r)
 }
@@ -122,7 +124,7 @@ pub async fn currencies() -> impl IntoResponse {
     Json(fields)
 }
 
-pub async fn all() -> impl IntoResponse {
+pub async fn daily_rates() -> impl IntoResponse {
     //let y = ecb().await;
 
     let mut rates = Rate::default();
