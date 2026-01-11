@@ -5,6 +5,7 @@ echo -e "2\t Print Currencies"
 echo -e "3\t Download"
 echo -e "4\t / - root"
 echo -e "5\t /daily - rates by today "
+echo -e "6\t /update - update from sources"
 
 until [ "$task" = "0" ]; do
 read task
@@ -24,7 +25,10 @@ elif [ "$task" = "4" ]; then
     curl -X GET 'http://0.0.0.0:8087/'
 elif [ "$task" = "5" ]; then
     echo "...${task}"
-    curl -X GET 'http://0.0.0.0:8087/daily'        
+    curl -X GET 'http://0.0.0.0:8087/daily'
+elif [ "$task" = "6" ]; then
+    echo "...${task}"
+    curl -X GET 'http://0.0.0.0:8087/update'            
 else
     echo "Goodbye! - Exit"
 fi
