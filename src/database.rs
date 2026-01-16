@@ -4,18 +4,19 @@ use std::collections::HashMap;
 #[derive(Debug)]
 struct Ratex {
     date: i32,
+    source_value: f64,
     target_value: f64,
 }
 
-pub async fn last_record(target_code: &str) -> Result<Vec<f64>> {
-    println!("...last_record fn");
+pub async fn last_record(source_code: &str, target_code: &str) -> Result<Vec<f64>> {
+    //println!("...last_record fn");
     let mut v: Vec<f64> = vec![];
     let conn = Connection::open("rate.db").unwrap();
 
     let mut stmt = conn
         .prepare(&format!(
-            "SELECT date, {0} FROM rate ORDER BY date desc LIMIT 1 ",
-            target_code
+            "SELECT date, {0},{1} FROM rate ORDER BY date desc LIMIT 1 ",
+            source_code, target_code
         ))
         .unwrap();
 
@@ -23,7 +24,8 @@ pub async fn last_record(target_code: &str) -> Result<Vec<f64>> {
         .query_map([], |row| {
             Ok(Ratex {
                 date: row.get(0)?,
-                target_value: row.get(1)?,
+                source_value: row.get(1)?,
+                target_value: row.get(2)?,
             })
         })
         .unwrap();
@@ -31,6 +33,7 @@ pub async fn last_record(target_code: &str) -> Result<Vec<f64>> {
     for rate in rate_iter {
         let rx = rate.unwrap();
         v.push(f64::from(rx.date));
+        v.push(rx.source_value);
         v.push(rx.target_value);
     }
 
@@ -38,8 +41,8 @@ pub async fn last_record(target_code: &str) -> Result<Vec<f64>> {
 }
 
 pub async fn last_records() -> Result<Vec<f64>> {
-    println!("...last_record fn");
-
+    //println!("...last_record fn");
+    let mut row: Vec<f64> = vec![];
     let conn = Connection::open("rate.db").unwrap();
     let mut stmt = conn
         .prepare(
@@ -71,24 +74,26 @@ php,
 sgd,
 thb,
 zar,
-usd FROM rate ORDER BY date desc LIMIT 1 ",
+rub,
+usd,
+eur FROM rate ORDER BY date desc LIMIT 1 ",
         )
         .unwrap();
 
     let c = stmt.column_count().clone();
 
-    let row = stmt
-        .query_row(params![], |r| {
-            let mut vec: Vec<f64> = vec![];
-            for i in 0..c {
-                let v: f64 = r.get(i).unwrap();
-                vec.push(v);
-            }
-            Ok(vec)
-        })
-        .unwrap();
+    let xrow = stmt.query_row(params![], |r| {
+        let mut vec: Vec<f64> = vec![];
+        for i in 0..c {
+            let v: f64 = r.get(i).unwrap();
+            vec.push(v);
+        }
+        Ok(vec)
+    });
 
-    //println!("{:?}", rates);
+    if xrow.is_ok() {
+        row = xrow.unwrap();
+    }
     Ok(row)
 }
 
@@ -141,7 +146,8 @@ sgd real not null default 0.0,
 thb real not null default 0.0,
 zar real not null default 0.0,
 rub real not null default 0.0,
-usd real not null default 0.0
+usd real not null default 0.0,
+eur real not null default 0.0
 
         )",
         (), // empty list of parameters.
