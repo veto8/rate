@@ -21,9 +21,11 @@ struct Update {
 struct Rated {
     target_code: String,
     source_code: String,
+    base_code: String,
     source_value: f64,
     target_value: f64,
     target_rate: f64,
+    source_rate: f64,
     msg: String,
     date: i32,
 }
@@ -83,52 +85,54 @@ pub async fn daily_rate(Query(params): Query<HashMap<String, String>>) -> impl I
     let mut r = Rated {
         target_code: "".to_string(),
         source_code: "".to_string(),
+        base_code: "eur".to_string(),
         source_value: 0.0,
         target_value: 0.0,
         target_rate: 0.0,
+        source_rate: 0.0,
+
         date: 0,
-        msg: "".to_string(),
+        msg: "(r.target_rate / 1 base_code) * (r.source_value / r.source_rate)".to_string(),
     };
     if params.contains_key("t") && params.contains_key("s") && params.contains_key("v") {
-        r.source_code = params["s"].to_string();
-        r.target_code = params["t"].to_string();
-        r.source_value = params["v"].parse().unwrap();
+        let fields = Rate::field_names();
+        if fields.contains(&r.source_code) && fields.contains(&r.target_code) {
+            //println!("{:?}", fields);
+            r.source_code = params["s"].to_string();
+            r.target_code = params["t"].to_string();
+            r.source_value = params["v"].parse().unwrap();
 
-        let _d = new().await;
-        let mut last = last_record(&r.source_code, &r.target_code).await.unwrap();
-        r.date = last[0] as i32;
-        let source_rate = last[0];
-        let target_rate = last[1];
+            let _d = new().await;
+            let mut last = last_record(&r.source_code, &r.target_code).await.unwrap();
+            if last.len() > 0 {
+                r.date = last[0] as i32;
+                r.source_rate = last[1];
+                r.target_rate = last[2];
+                r.target_value = ((r.target_rate / 1.0) * (r.source_value / r.source_rate) * 100.0)
+                    .round()
+                    / 100.0;
 
-        println!("data: {:?}", last);
-        /*
-        if !last.is_empty().clone() {
-            let now = Utc::now();
-            let today: i32 = now.format("%Y%m%d16").to_string().parse().unwrap();
-            let date: i32 = last[0] as i32;
-            /*
-                println!(
-                    "today: {0} | record: {1} | diff: {2}",
-                    today,
-                    date,
-                    today - date
-            );
-                */
-            if today - date >= 300 {
-                let rates = get_ecb_rates().await.unwrap();
-                let _l = insert(rates).await;
-                last = last_record(&r.source_code, &r.target_code).await.unwrap();
+                let now = Utc::now();
+                let today: i32 = now.format("%Y%m%d16").to_string().parse().unwrap();
+                let date: i32 = last[0] as i32;
+                if today - date >= 300 {
+                    let rates = get_ecb_rates().await.unwrap();
+                    let _l = insert(rates).await;
+                    last = last_record(&r.source_code, &r.target_code).await.unwrap();
+                    r.date = last[0] as i32;
+                    r.source_rate = last[1];
+                    r.target_rate = last[2];
+                    r.target_value =
+                        ((r.target_rate / 1.0) * (r.source_value / r.source_rate) * 100.0).round()
+                            / 100.0;
+                }
+            } else {
+                let xrates = get_ecb_rates().await.unwrap();
+                let _l = insert(xrates).await;
             }
         } else {
-            let rates = get_ecb_rates().await.unwrap();
-            let _l = insert(rates).await;
-            last = last_record(&r.source_code, &r.target_code).await.unwrap();
+            r.msg = "source_code/target_code does not exists".to_string();
         }
-
-        r.date = last[0] as i32;
-        r.target_rate = last[1];
-        r.target_value = r.target_rate * r.source_value;
-        */
     } else {
         //let x = gethostname().into_string();
         //println!("{:?}", x);
@@ -198,7 +202,7 @@ pub async fn update_rates() -> impl IntoResponse {
     let _d = new().await;
     let last = last_records().await.unwrap();
     if last.len() > 0 {
-        println!("{:?}", last.len());
+        //println!("{:?}", last.len());
 
         let now = Utc::now();
         let today: i32 = now.format("%Y%m%d16").to_string().parse().unwrap();

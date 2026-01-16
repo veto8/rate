@@ -9,7 +9,7 @@ struct Ratex {
 }
 
 pub async fn last_record(source_code: &str, target_code: &str) -> Result<Vec<f64>> {
-    println!("...last_record fn");
+    //println!("...last_record fn");
     let mut v: Vec<f64> = vec![];
     let conn = Connection::open("rate.db").unwrap();
 
@@ -41,7 +41,7 @@ pub async fn last_record(source_code: &str, target_code: &str) -> Result<Vec<f64
 }
 
 pub async fn last_records() -> Result<Vec<f64>> {
-    println!("...last_record fn");
+    //println!("...last_record fn");
     let mut row: Vec<f64> = vec![];
     let conn = Connection::open("rate.db").unwrap();
     let mut stmt = conn
